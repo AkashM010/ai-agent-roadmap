@@ -1,0 +1,613 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Agent Roadmap</title>
+<style>
+:root{
+  --paper:#F4F4F1; --ink:#16171B; --sub:#6E7076; --faint:#A9ABB2;
+  --rule:#D9DAD5; --rule2:#C2C3BE;
+  --acc:#2A3FD6; --acc-ink:#FFFFFF; --ok:#1F7A4D;
+  --wash:#ECECE8;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#101114; --ink:#E8E9EC; --sub:#9A9CA4; --faint:#5C5E66;
+    --rule:#26282E; --rule2:#33363E;
+    --acc:#7C8CFF; --acc-ink:#0E0F12; --ok:#4CBF87;
+    --wash:#17181C;
+  }
+}
+:root[data-theme="light"]{
+  --paper:#F4F4F1; --ink:#16171B; --sub:#6E7076; --faint:#A9ABB2;
+  --rule:#D9DAD5; --rule2:#C2C3BE;
+  --acc:#2A3FD6; --acc-ink:#FFFFFF; --ok:#1F7A4D;
+  --wash:#ECECE8;
+}
+:root[data-theme="dark"]{
+  --paper:#101114; --ink:#E8E9EC; --sub:#9A9CA4; --faint:#5C5E66;
+  --rule:#26282E; --rule2:#33363E;
+  --acc:#7C8CFF; --acc-ink:#0E0F12; --ok:#4CBF87;
+  --wash:#17181C;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--ink);
+  font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+  padding-bottom:calc(30px + env(safe-area-inset-bottom));
+}
+.mono{font-family:"Cascadia Mono",ui-monospace,"SF Mono",Consolas,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:680px;margin:0 auto;padding:0 18px}
+::selection{background:var(--acc);color:var(--acc-ink)}
+
+/* ---- overall progress line, top of viewport ---- */
+.meterline{
+  position:fixed;top:0;left:0;right:0;height:3px;z-index:40;background:var(--rule);
+}
+.meterline i{display:block;height:100%;width:0;background:var(--acc);transition:width .4s cubic-bezier(.22,1,.36,1)}
+
+/* ---- masthead ---- */
+header{
+  position:sticky;top:0;z-index:30;background:var(--paper);
+  border-bottom:1px solid var(--rule2);
+  padding-top:calc(3px + env(safe-area-inset-top));
+}
+.mast{display:flex;align-items:baseline;gap:10px;padding:14px 0 2px}
+.mast .ttl{
+  font-size:17px;font-weight:800;letter-spacing:-.01em;flex:1;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.mast .ttl small{font-weight:600;color:var(--sub);letter-spacing:.02em}
+.mast .pct{font-size:17px;font-weight:700}
+.mast .frac{font-size:11px;color:var(--sub)}
+.substat{
+  display:flex;gap:14px;padding:0 0 10px;
+  font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);
+}
+.substat b{color:var(--ink);font-weight:700}
+.substat .stk{color:var(--acc);font-weight:700}
+.substat .theme{
+  margin-left:auto;background:none;border:0;cursor:pointer;color:var(--sub);
+  font:inherit;letter-spacing:inherit;text-transform:inherit;padding:0;
+  border-bottom:1px solid var(--rule2);
+}
+/* controls */
+.controls{display:flex;gap:0;border-top:1px solid var(--rule);padding:9px 0}
+.controls input[type=search]{
+  flex:1;min-width:0;border:0;background:transparent;color:var(--ink);
+  font:inherit;font-size:14px;outline:none;padding:2px 0;
+  border-bottom:1px solid var(--rule2);
+}
+.controls input[type=search]:focus{border-bottom-color:var(--acc)}
+.controls input::placeholder{color:var(--faint)}
+.seg{display:flex;gap:16px;margin-left:18px;align-items:center}
+.seg button{
+  background:none;border:0;padding:2px 0;cursor:pointer;color:var(--sub);
+  font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  border-bottom:2px solid transparent;
+}
+.seg button.on{color:var(--ink);border-bottom-color:var(--acc)}
+/* chapter index strip */
+.jump{
+  display:flex;gap:2px;overflow-x:auto;padding:8px 0 10px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.jump::-webkit-scrollbar{display:none}
+.jump button{
+  flex:none;background:none;border:1px solid var(--rule2);color:var(--sub);
+  min-width:36px;height:28px;padding:0 8px;cursor:pointer;
+  font-family:"Cascadia Mono",ui-monospace,Consolas,monospace;
+  font-size:11px;font-weight:600;border-radius:2px;
+}
+.jump button:active{background:var(--wash)}
+.jump button.done-ph{border-color:var(--ok);color:var(--ok)}
+
+/* ---- next up ---- */
+.next{
+  margin:18px 0 6px;border-left:3px solid var(--acc);
+  padding:6px 0 6px 14px;cursor:pointer;
+}
+.next .tag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:800}
+.next .nxt-item{font-size:16.5px;font-weight:700;margin-top:2px;letter-spacing:-.01em}
+.next .nxt-phase{font-size:12px;color:var(--sub);margin-top:1px}
+.next:active{background:var(--wash)}
+
+/* ---- chapters ---- */
+.phase{border-bottom:1px solid var(--rule);scroll-margin-top:170px}
+.phase:first-of-type{border-top:1px solid var(--rule2);margin-top:14px}
+.ph-head{
+  display:flex;align-items:center;gap:14px;padding:15px 0;
+  cursor:pointer;user-select:none;
+}
+.ph-head:active{background:var(--wash)}
+.ph-num{
+  flex:none;width:34px;font-size:19px;font-weight:600;color:var(--faint);
+  font-variant-numeric:tabular-nums;line-height:1;
+}
+.phase.all-done .ph-num{color:var(--ok)}
+.ph-mid{flex:1;min-width:0}
+.ph-title{font-size:15.5px;font-weight:700;letter-spacing:-.01em}
+.ph-meta{height:2px;background:var(--rule);margin-top:7px;max-width:180px}
+.ph-meta i{display:block;height:100%;width:0;background:var(--acc);transition:width .35s cubic-bezier(.22,1,.36,1)}
+.ph-meta i.full{background:var(--ok)}
+.ph-count{font-size:12px;color:var(--sub);letter-spacing:.02em}
+.ph-count.full{color:var(--ok);font-weight:700}
+.ph-caret{color:var(--faint);font-size:10px;transition:transform .18s;width:12px;text-align:center}
+.phase.open .ph-caret{transform:rotate(90deg)}
+.ph-body{display:none;padding-bottom:6px}
+.phase.open .ph-body{display:block}
+
+/* ---- references ---- */
+.res{border-top:1px dashed var(--rule2);padding:10px 0 12px;margin-left:48px}
+.res-h{
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--sub);font-weight:800;margin-bottom:5px;
+}
+.res a{
+  display:flex;align-items:baseline;gap:9px;padding:5px 0;
+  color:var(--ink);text-decoration:none;font-size:13.5px;min-height:30px;
+}
+.res a:active{color:var(--acc)}
+.res .rtag{
+  flex:none;font-size:9px;font-weight:700;letter-spacing:.08em;
+  color:var(--sub);min-width:52px;
+  font-family:"Cascadia Mono",ui-monospace,Consolas,monospace;
+}
+.res a.prime .rtag{color:var(--acc)}
+.res a.prime .rt{font-weight:700}
+.res .rt{flex:1;min-width:0;border-bottom:1px solid var(--rule);padding-bottom:2px}
+.res .ext{color:var(--faint);font-size:11px}
+
+/* ---- items ---- */
+.item{
+  display:flex;align-items:center;gap:13px;padding:9px 0;min-height:44px;
+  border-top:1px solid var(--rule);margin-left:48px;cursor:pointer;
+}
+.ph-body .item:first-of-type,.res+ .item{border-top:0}
+.item:active{background:var(--wash)}
+.box{
+  flex:none;width:19px;height:19px;border:1.5px solid var(--rule2);
+  display:flex;align-items:center;justify-content:center;border-radius:2px;
+  transition:border-color .12s,background .12s;
+}
+.box svg{width:12px;height:12px;opacity:0;transform:scale(.6);transition:all .14s}
+.item.done .box{background:var(--ink);border-color:var(--ink);animation:pop .25s cubic-bezier(.22,1.5,.36,1)}
+.item.done .box svg{opacity:1;transform:scale(1)}
+.item.done .box path{stroke:var(--paper)}
+@keyframes pop{0%{transform:scale(.75)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+.item .txt{font-size:14.5px;flex:1;min-width:0}
+.item.done .txt{color:var(--faint)}
+.item.hide{display:none}
+.itm-ai,.itm-link{
+  flex:none;display:flex;align-items:center;justify-content:center;
+  height:30px;border:1px solid var(--rule2);border-radius:2px;
+  color:var(--sub);background:none;cursor:pointer;text-decoration:none;
+  font-family:"Cascadia Mono",ui-monospace,Consolas,monospace;
+  font-size:10px;font-weight:700;letter-spacing:.06em;
+  transition:color .12s,border-color .12s;
+}
+.itm-ai{width:38px}
+.itm-link{width:30px;font-size:12px}
+.itm-ai:active,.itm-link:active{color:var(--acc);border-color:var(--acc)}
+
+/* ---- toast ---- */
+.toast{
+  position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));
+  transform:translateX(-50%) translateY(16px);z-index:50;
+  background:var(--ink);color:var(--paper);
+  padding:10px 16px;border-radius:3px;font-size:12.5px;font-weight:600;
+  letter-spacing:.02em;opacity:0;pointer-events:none;
+  transition:opacity .22s,transform .22s;max-width:88vw;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---- footer ---- */
+.foot{
+  margin:30px 0 10px;display:flex;gap:18px;justify-content:center;
+  border-top:1px solid var(--rule2);padding-top:16px;
+}
+.foot button{
+  background:none;border:0;cursor:pointer;color:var(--sub);
+  font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  padding:2px 0;border-bottom:1px solid var(--rule2);
+}
+.foot button:active{color:var(--acc);border-bottom-color:var(--acc)}
+.foot-note{text-align:center;font-size:11px;color:var(--faint);line-height:1.7}
+.empty{padding:28px 0;text-align:center;color:var(--sub);font-size:13px;display:none}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="meterline"><i id="meter"></i></div>
+
+<header><div class="wrap">
+  <div class="mast">
+    <div class="ttl">Roadmap <small>— AI Agent Engineer</small></div>
+    <div class="pct mono" id="ringPct">0%</div>
+    <div class="frac mono"><span id="doneN">0</span>/<span id="totalN">0</span></div>
+  </div>
+  <div class="substat">
+    <span>Done <b id="doneN2">0</b></span>
+    <span>Left <b id="leftN">0</b></span>
+    <span class="stk" id="streak"></span>
+    <button class="theme" id="themeBtn">Theme</button>
+  </div>
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search topics" autocomplete="off">
+    <div class="seg">
+      <button class="on" data-f="all">All</button>
+      <button data-f="todo">Open</button>
+      <button data-f="done">Done</button>
+    </div>
+  </div>
+  <div class="jump" id="jump"></div>
+</div></header>
+
+<div class="wrap">
+  <div class="next" id="nextCard" style="display:none">
+    <div class="tag">Next</div>
+    <div class="nxt-item" id="nxtItem"></div>
+    <div class="nxt-phase" id="nxtPhase"></div>
+  </div>
+  <main id="phases"></main>
+  <div class="empty" id="empty">No matching topics.</div>
+  <div class="foot">
+    <button id="exportBtn">Export</button>
+    <button id="importBtn">Import</button>
+    <button id="resetBtn">Reset</button>
+    <input type="file" id="importFile" accept=".json" hidden>
+  </div>
+  <div class="foot-note">AI = copies an interactive tutor prompt for that topic — paste into ChatGPT, Claude, Gemini, any AI.<br>Progress saves automatically on this device. Export / Import moves it between devices.</div>
+</div>
+
+<script>
+// items: string, or [text, url] when topic has a direct study link
+const PHASES=[
+ {n:"01",t:"LLM Fundamentals",
+  res:[
+   ["Andrej Karpathy — LLM videos (Intro to LLMs, Deep Dive)","https://www.youtube.com/@AndrejKarpathy/videos","VIDEO",1],
+   ["3Blue1Brown — Neural Networks & Transformers series","https://www.youtube.com/@3blue1brown/playlists","VIDEO"],
+   ["The Illustrated Transformer — Jay Alammar","https://jalammar.github.io/illustrated-transformer/","GUIDE"],
+   ["Prompt Engineering Guide (covers all LLM basics)","https://www.promptingguide.ai/","GUIDE"],
+   ["OpenAI Tokenizer — see tokens live","https://platform.openai.com/tokenizer","TOOL"]
+  ],
+  items:["AI Basics","Machine Learning vs Deep Learning vs Generative AI","What is an LLM?","How LLMs are trained (high level)","Inference vs Training",["Tokens","https://platform.openai.com/tokenizer"],"Tokenization","Context Window",["Embeddings","https://platform.openai.com/docs/guides/embeddings"],["Vector Databases (basic)","https://www.pinecone.io/learn/vector-database/"],"Temperature","Top-P","Frequency Penalty","Presence Penalty","System Prompt","User Prompt","Assistant Messages","Conversation History","Structured Outputs","JSON Responses",["Function Calling","https://platform.openai.com/docs/guides/function-calling"],"Tool Calling","Memory","Context Engineering","Hallucinations","Knowledge Cutoff",["RAG (High Level)","https://www.pinecone.io/learn/retrieval-augmented-generation/"],"Reasoning Models","AI Agent Basics"]},
+ {n:"02",t:"Python for AI",
+  res:[
+   ["Official Python Tutorial","https://docs.python.org/3/tutorial/","DOCS",1],
+   ["Automate the Boring Stuff (free book)","https://automatetheboringstuff.com/","BOOK"],
+   ["Corey Schafer — Python playlists","https://www.youtube.com/@coreyms/playlists","VIDEO"],
+   ["Real Python — articles & tutorials","https://realpython.com/","GUIDE"],
+   ["Exercism Python track — practice","https://exercism.org/tracks/python","DRILL"]
+  ],
+  items:["Install Python","VS Code Setup",["Virtual Environments","https://docs.python.org/3/library/venv.html"],"pip","requirements.txt","Variables","Data Types","Strings","Numbers","Booleans","Lists","Tuples","Dictionaries","Sets","if / else","for loops","while loops","List Comprehensions","Functions","Parameters","Return Values","Lambda Functions (basic)","Read Files","Write Files","CSV","JSON","try","except","finally","Classes","Objects","Methods","Inheritance (basic)","Modules","Packages","datetime","pathlib","os",["requests","https://requests.readthedocs.io/"],["async","https://realpython.com/async-io-python/"],"await","Why async matters"]},
+ {n:"03",t:"APIs",
+  res:[
+   ["MDN — HTTP fundamentals","https://developer.mozilla.org/en-US/docs/Web/HTTP","DOCS",1],
+   ["REST API concepts — restfulapi.net","https://restfulapi.net/","GUIDE"],
+   ["requests library docs","https://requests.readthedocs.io/","DOCS"],
+   ["JSONPlaceholder — practice API","https://jsonplaceholder.typicode.com/","DRILL"],
+   ["freeCodeCamp — APIs for Beginners (YouTube)","https://www.youtube.com/@freecodecamp/search?query=API%20for%20beginners","VIDEO"]
+  ],
+  items:["What is an API?","Client vs Server",["REST API","https://restfulapi.net/"],["HTTP","https://developer.mozilla.org/en-US/docs/Web/HTTP"],"GET","POST","PUT","PATCH","DELETE","200","201","400","401","403","404","500","JSON Objects","JSON Arrays","Parse JSON in Python","Create JSON","API Keys","Bearer Tokens",["OAuth (basic)","https://oauth.net/2/"],["JWT (basic)","https://jwt.io/introduction"],["JSONPlaceholder","https://jsonplaceholder.typicode.com/"],["DummyJSON","https://dummyjson.com/"],["ReqRes","https://reqres.in/"],["PokéAPI","https://pokeapi.co/"]]},
+ {n:"04",t:"LLM APIs",
+  res:[
+   ["OpenAI API docs","https://platform.openai.com/docs","DOCS",1],
+   ["Anthropic (Claude) API docs","https://docs.anthropic.com/","DOCS"],
+   ["Google Gemini API docs","https://ai.google.dev/","DOCS"],
+   ["OpenAI Cookbook — working examples","https://cookbook.openai.com/","CODE"],
+   ["Anthropic Cookbook — working examples","https://github.com/anthropics/anthropic-cookbook","CODE"]
+  ],
+  items:[["OpenAI API","https://platform.openai.com/docs"],["Anthropic API","https://docs.anthropic.com/"],["Gemini API","https://ai.google.dev/"],"Messages","Response Parsing","Streaming",["Function Calling","https://platform.openai.com/docs/guides/function-calling"]]},
+ {n:"05",t:"Prompt Engineering",
+  res:[
+   ["Prompt Engineering Guide — all techniques","https://www.promptingguide.ai/","GUIDE",1],
+   ["Anthropic interactive prompt-eng tutorial","https://github.com/anthropics/prompt-eng-interactive-tutorial","COURSE"],
+   ["Anthropic docs — prompt engineering section","https://docs.anthropic.com/","DOCS"],
+   ["DeepLearning.AI free short courses","https://learn.deeplearning.ai/courses","COURSE"]
+  ],
+  items:[["Zero-shot Prompting","https://www.promptingguide.ai/techniques/zeroshot"],["Few-shot Prompting","https://www.promptingguide.ai/techniques/fewshot"],"Role Prompting","XML Prompting","JSON Prompting","Reverse Prompting",["Prompt Chaining","https://www.promptingguide.ai/techniques/prompt_chaining"],"Guardrails"]},
+ {n:"06",t:"AI Agent Concepts",
+  res:[
+   ["Anthropic — Building Effective Agents","https://www.anthropic.com/engineering/building-effective-agents","GUIDE",1],
+   ["Hugging Face Agents Course (free)","https://huggingface.co/learn/agents-course","COURSE"],
+   ["Lilian Weng — LLM Powered Autonomous Agents","https://lilianweng.github.io/posts/2023-06-23-agent/","GUIDE"],
+   ["12-Factor Agents — production principles","https://github.com/humanlayer/12-factor-agents","GUIDE"]
+  ],
+  items:[["What is an AI Agent?","https://www.anthropic.com/engineering/building-effective-agents"],"Agent vs Chatbot","Agent Loop","Planning","Reflection","Memory","Tools","Context Engineering",["Multi-Agent Systems","https://langchain-ai.github.io/langgraph/concepts/multi_agent/"],"Human-in-the-Loop","Orchestration","Guardrails"]},
+ {n:"07",t:"Frameworks",
+  res:[
+   ["LangGraph docs — YOUR PRIMARY FRAMEWORK","https://langchain-ai.github.io/langgraph/","DOCS",1],
+   ["LangChain Academy — Intro to LangGraph (free)","https://academy.langchain.com/","COURSE",1],
+   ["OpenAI Agents SDK docs","https://openai.github.io/openai-agents-python/","DOCS"],
+   ["CrewAI docs (skim)","https://docs.crewai.com/","DOCS"],
+   ["AutoGen docs (skim)","https://microsoft.github.io/autogen/","DOCS"]
+  ],
+  items:[["OpenAI Agents SDK","https://openai.github.io/openai-agents-python/"],["LangGraph","https://langchain-ai.github.io/langgraph/"],["CrewAI","https://docs.crewai.com/"],["AutoGen","https://microsoft.github.io/autogen/"]]},
+ {n:"08",t:"Databases",
+  res:[
+   ["SQLBolt — interactive SQL lessons","https://sqlbolt.com/","DRILL",1],
+   ["Python sqlite3 docs","https://docs.python.org/3/library/sqlite3.html","DOCS"],
+   ["PostgreSQL Tutorial","https://www.postgresqltutorial.com/","GUIDE"],
+   ["Chroma docs","https://docs.trychroma.com/","DOCS"],
+   ["Pinecone learning center","https://www.pinecone.io/learn/","GUIDE"]
+  ],
+  items:[["SQLite","https://docs.python.org/3/library/sqlite3.html"],["PostgreSQL (basic)","https://www.postgresqltutorial.com/"],["Vector Database Basics","https://www.pinecone.io/learn/vector-database/"],["ChromaDB","https://docs.trychroma.com/"],["Pinecone (basic)","https://docs.pinecone.io/"]]},
+ {n:"09",t:"RAG",
+  res:[
+   ["LangChain RAG tutorial (build one end-to-end)","https://python.langchain.com/docs/tutorials/rag/","DOCS",1],
+   ["Pinecone — RAG explained","https://www.pinecone.io/learn/retrieval-augmented-generation/","GUIDE"],
+   ["Pinecone — chunking strategies","https://www.pinecone.io/learn/chunking-strategies/","GUIDE"],
+   ["DeepLearning.AI free short courses (RAG ones)","https://learn.deeplearning.ai/courses","COURSE"]
+  ],
+  items:[["What is RAG?","https://www.pinecone.io/learn/retrieval-augmented-generation/"],"Embeddings",["Chunking","https://www.pinecone.io/learn/chunking-strategies/"],"Retrieval","Similarity Search","Vector Databases",["Build First RAG App","https://python.langchain.com/docs/tutorials/rag/"]]},
+ {n:"10",t:"Projects",
+  res:[
+   ["OpenAI Cookbook — copy working patterns","https://cookbook.openai.com/","CODE",1],
+   ["LangGraph tutorials — agent recipes","https://langchain-ai.github.io/langgraph/tutorials/","CODE"],
+   ["Anthropic Cookbook","https://github.com/anthropics/anthropic-cookbook","CODE"],
+   ["Streamlit — fastest free UI for demos","https://docs.streamlit.io/","TOOL"]
+  ],
+  items:["AI Chatbot","PDF Chat","Resume Analyzer","Email Assistant","AI Research Agent","QA Test Case Generator","Bug Report Agent","Jira Assistant","Playwright Test Generator","Multi-Agent QA System","AI Coding Assistant","AI Project Manager","Autonomous Research Agent","AI Software Testing Assistant"]},
+ {n:"PF",t:"Final Portfolio Goals",
+  res:[
+   ["GitHub Pages — free hosting","https://pages.github.com/","TOOL",1],
+   ["Hugging Face Spaces — free app hosting","https://huggingface.co/spaces","TOOL"],
+   ["Streamlit Community Cloud — free deploys","https://streamlit.io/cloud","TOOL"],
+   ["dev.to — free technical blogging","https://dev.to/","TOOL"]
+  ],
+  items:["Deploy an AI Agent","Deploy a RAG Application","Deploy a Multi-Agent System","Publish on GitHub","Write Technical Blogs","Create LinkedIn Posts","Build Personal Portfolio Website","Complete 5 End-to-End AI Agent Projects"]},
+ {n:"MS",t:"Milestones",res:[],
+  items:["Understand how LLMs work","Become comfortable with Python and REST APIs","Build an app using an LLM API","Build your first AI Agent","Build a multi-agent system","Deploy an AI Agent publicly","Build an AI-powered QA portfolio"]}
+];
+
+const KEY="roadmap.v1";
+let state=load();
+function load(){
+  try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.checked)return s;}catch(e){}
+  return {checked:{},days:[],open:{}};
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+
+// normalize items; ids p{phase}i{index} — unchanged since v1, saved progress stays valid
+const flat=[];
+PHASES.forEach((p,pi)=>p.items.forEach((raw,ii)=>{
+  const txt=Array.isArray(raw)?raw[0]:raw;
+  const url=Array.isArray(raw)?raw[1]:null;
+  flat.push({id:"p"+pi+"i"+ii,pi,ii,txt,url});
+}));
+
+const CHECK='<svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5l3.5 3.5 7-8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")}
+
+const phasesEl=document.getElementById("phases");
+PHASES.forEach((p,pi)=>{
+  const sec=document.createElement("section");
+  sec.className="phase"+(state.open[pi]?" open":"");
+  sec.dataset.pi=pi;
+  const resHtml=p.res.length?
+   '<div class="res"><div class="res-h">References</div>'+
+     p.res.map(r=>
+       '<a href="'+esc(r[1])+'" target="_blank" rel="noopener"'+(r[3]?' class="prime"':'')+'>'+
+         '<span class="rtag">'+r[2]+'</span>'+
+         '<span class="rt">'+esc(r[0])+'</span>'+
+         '<span class="ext">↗</span>'+
+       '</a>').join("")+
+   '</div>':"";
+  const itemsHtml=flat.filter(f=>f.pi===pi).map(f=>
+    '<div class="item" data-id="'+f.id+'">'+
+      '<span class="box">'+CHECK+'</span>'+
+      '<span class="txt">'+esc(f.txt)+'</span>'+
+      '<button class="itm-ai" data-ai="'+f.id+'" aria-label="Copy AI tutor prompt">AI</button>'+
+      (f.url?'<a class="itm-link" href="'+esc(f.url)+'" target="_blank" rel="noopener" aria-label="Open resource">↗</a>':'')+
+    '</div>').join("");
+  sec.innerHTML=
+   '<div class="ph-head">'+
+     '<span class="ph-num mono">'+p.n+'</span>'+
+     '<span class="ph-mid"><span class="ph-title">'+esc(p.t)+'</span><span class="ph-meta"><i></i></span></span>'+
+     '<span class="ph-count mono"></span>'+
+     '<span class="ph-caret">▶</span>'+
+   '</div>'+
+   '<div class="ph-body">'+resHtml+itemsHtml+'</div>';
+  phasesEl.appendChild(sec);
+  sec.querySelector(".ph-head").onclick=()=>{
+    sec.classList.toggle("open");
+    state.open[pi]=sec.classList.contains("open");save();
+  };
+});
+
+// ---- AI tutor prompts: generated per topic + phase type ----
+const CODE_PHASES=[1,2,3,6,7,8]; // Python, APIs, LLM APIs, Frameworks, DBs, RAG
+function buildPrompt(f){
+  const topic=f.txt, phase=PHASES[f.pi].t, pi=f.pi;
+  if(pi===9)return 'You are my senior AI engineering mentor. I want to build this portfolio project: "'+topic+'". I am learning to become an AI Agent Engineer and I work in Python.\n\nMentor me interactively, one step at a time — never dump the full solution:\n1. Ask me 2-3 scoping questions (features, which LLM/API keys I have, my current skill level).\n2. Help me define a minimal MVP I can finish in a few days.\n3. Guide me phase by phase: design → environment setup → core build → testing → polish. One phase at a time; WAIT for me to finish and report back before continuing.\n4. When I paste code or errors, review and debug with explanations, not just corrected code.\n5. Push me to add a few tests and a README.\n6. At the end, help me deploy it free, draft a short LinkedIn post about it, and list 3 interview talking points from this project.\n\nStart with step 1 now.';
+  if(pi===10)return 'You are my career coach for becoming an AI Agent Engineer. My current goal: "'+topic+'".\n\nWork with me interactively:\n1. Ask me questions about my current progress and blockers on this goal.\n2. Build a concrete step-by-step plan with realistic deadlines.\n3. Give me ONE small action I can complete today.\n4. Each time I return and report progress, review it honestly and give the next single action.\n\nKeep every reply short and actionable. Start with step 1 now.';
+  if(pi===11)return 'You are a strict but fair technical interviewer. Assess whether I have truly reached this milestone of my AI Agent Engineer roadmap: "'+topic+'".\n\nRun an interactive assessment: ask me 8-10 questions ONE AT A TIME — mix conceptual, practical, and scenario-based. WAIT for each answer before the next question. Do not reveal answers during the assessment.\n\nAfter the last question: score me out of 10, list my weak areas bluntly, and give a focused 1-week revision plan targeting the gaps. Begin with question 1 now.';
+  const code=CODE_PHASES.includes(pi);
+  return 'You are an expert personal tutor. I am learning to become an AI Agent Engineer. Today\'s topic: "'+topic+'" — from my roadmap phase "'+phase+'".\n\nTeach me interactively — never lecture-dump:\n1. First ask me 1-2 quick questions to gauge what I already know about this topic.\n2. Teach one focused chunk at a time — as detailed as the concept needs — each with a simple analogy and one concrete example from real AI-agent building.\n3. After every chunk, ask me exactly ONE check question or micro-exercise. WAIT for my reply before continuing.\n4. If my answer is wrong, give a hint first — reveal the answer only if I miss twice.\n'+(code?'5. Include small hands-on Python exercises I can run locally; when I paste my code, review it and fix mistakes with explanations.\n':'5. Keep it practical — always tie the concept back to how it is used when building real AI agents.\n')+'6. Adapt to me: if I say "faster" compress, if I say "deeper" go deeper.\n7. When I say "wrap up", finish with: (a) a 5-question quiz, (b) short summary notes I can save, (c) 3 interview questions on this topic with strong answers.\n\nBegin with step 1 now.';
+}
+
+const toastEl=document.createElement("div");
+toastEl.className="toast";document.body.appendChild(toastEl);
+let toastT;
+function toast(msg){
+  toastEl.textContent=msg;toastEl.classList.add("show");
+  clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove("show"),2200);
+}
+function copyText(t){
+  if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t);
+  const ta=document.createElement("textarea");ta.value=t;
+  ta.style.cssText="position:fixed;opacity:0";document.body.appendChild(ta);
+  ta.select();document.execCommand("copy");ta.remove();return Promise.resolve();
+}
+function buzz(ms){if(navigator.vibrate)navigator.vibrate(ms)}
+
+phasesEl.addEventListener("click",e=>{
+  const ai=e.target.closest(".itm-ai");
+  if(ai){
+    const f=flat.find(x=>x.id===ai.dataset.ai);
+    copyText(buildPrompt(f)).then(()=>{
+      toast("Tutor prompt copied — paste into any AI chat");buzz(15);
+    });
+    return;
+  }
+  if(e.target.closest("a"))return; // reference links: navigate, don't toggle
+  const row=e.target.closest(".item");if(!row)return;
+  const id=row.dataset.id;
+  const wasDone=!!state.checked[id];
+  if(wasDone){delete state.checked[id];}
+  else{
+    state.checked[id]=1;buzz(10);
+    const t=today();
+    if(!state.days.includes(t))state.days.push(t);
+  }
+  save();render();
+  if(!wasDone){
+    const pi=+row.closest(".phase").dataset.pi;
+    const phaseFlat=flat.filter(f=>f.pi===pi);
+    if(flat.every(f=>state.checked[f.id])){
+      toast("Roadmap 100% — AI Agent Engineer");buzz([50,80,50,80,50]);
+    }else if(phaseFlat.every(f=>state.checked[f.id])){
+      toast(PHASES[pi].t+" — complete");buzz([30,50,30]);
+    }
+  }
+});
+
+// chapter index strip
+const jumpEl=document.getElementById("jump");
+PHASES.forEach((p,pi)=>{
+  const b=document.createElement("button");
+  b.textContent=p.n;
+  b.title=p.t;
+  b.dataset.pi=pi;
+  b.onclick=()=>{
+    const sec=document.querySelector('.phase[data-pi="'+pi+'"]');
+    sec.classList.add("open");
+    state.open[pi]=true;save();
+    sec.scrollIntoView({behavior:"smooth",block:"start"});
+  };
+  jumpEl.appendChild(b);
+});
+
+let filter="all";
+const searchEl=document.getElementById("search");
+searchEl.oninput=render;
+document.querySelectorAll(".seg button").forEach(c=>c.onclick=()=>{
+  filter=c.dataset.f;
+  document.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x===c));
+  render();
+});
+
+function streakCount(){
+  const set=new Set(state.days);
+  let n=0,d=new Date();
+  if(!set.has(today()))d.setDate(d.getDate()-1);
+  for(;;){
+    const k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    if(set.has(k)){n++;d.setDate(d.getDate()-1);}else break;
+  }
+  return n;
+}
+
+function render(){
+  const q=searchEl.value.trim().toLowerCase();
+  let done=0,visibleAny=false;
+  document.querySelectorAll(".phase").forEach(sec=>{
+    const pi=+sec.dataset.pi;
+    let pDone=0,pVisible=0;
+    sec.querySelectorAll(".item").forEach(row=>{
+      const id=row.dataset.id;
+      const isDone=!!state.checked[id];
+      row.classList.toggle("done",isDone);
+      if(isDone){pDone++;done++;}
+      const txt=row.querySelector(".txt").textContent.toLowerCase();
+      let show=!q||txt.includes(q);
+      if(filter==="done")show=show&&isDone;
+      if(filter==="todo")show=show&&!isDone;
+      row.classList.toggle("hide",!show);
+      if(show)pVisible++;
+    });
+    const total=PHASES[pi].items.length;
+    const cnt=sec.querySelector(".ph-count");
+    cnt.textContent=pDone+"/"+total;
+    cnt.classList.toggle("full",pDone===total);
+    const bar=sec.querySelector(".ph-meta i");
+    bar.style.width=(pDone/total*100)+"%";
+    bar.classList.toggle("full",pDone===total);
+    sec.classList.toggle("all-done",pDone===total);
+    sec.style.display=pVisible?"":"none";
+    if(pVisible)visibleAny=true;
+    if((q||filter!=="all")&&pVisible)sec.classList.add("open");
+    const jb=jumpEl.querySelector('button[data-pi="'+pi+'"]');
+    if(jb)jb.classList.toggle("done-ph",pDone===total);
+  });
+  document.getElementById("empty").style.display=visibleAny?"none":"block";
+
+  const total=flat.length;
+  const pct=Math.round(done/total*100);
+  document.getElementById("doneN").textContent=done;
+  document.getElementById("doneN2").textContent=done;
+  document.getElementById("leftN").textContent=total-done;
+  document.getElementById("totalN").textContent=total;
+  document.getElementById("ringPct").textContent=pct+"%";
+  document.getElementById("meter").style.width=pct+"%";
+  const s=streakCount();
+  document.getElementById("streak").textContent=s>0?"Streak "+s+"d":"";
+
+  const nxt=flat.find(f=>!state.checked[f.id]);
+  const card=document.getElementById("nextCard");
+  if(nxt&&!q&&filter==="all"){
+    card.style.display="";
+    document.getElementById("nxtItem").textContent=nxt.txt;
+    document.getElementById("nxtPhase").textContent=PHASES[nxt.pi].n+" — "+PHASES[nxt.pi].t;
+    card.onclick=()=>{
+      const sec=document.querySelector('.phase[data-pi="'+nxt.pi+'"]');
+      sec.classList.add("open");state.open[nxt.pi]=true;save();
+      const row=sec.querySelector('.item[data-id="'+nxt.id+'"]');
+      row.scrollIntoView({behavior:"smooth",block:"center"});
+    };
+  }else card.style.display="none";
+}
+
+// theme
+const themeBtn=document.getElementById("themeBtn");
+const savedTheme=localStorage.getItem(KEY+".theme");
+if(savedTheme)document.documentElement.dataset.theme=savedTheme;
+themeBtn.onclick=()=>{
+  const cur=document.documentElement.dataset.theme||
+    (matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  document.documentElement.dataset.theme=next;
+  localStorage.setItem(KEY+".theme",next);
+};
+
+// backup
+document.getElementById("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify(state,null,1)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="roadmap-backup.json";
+  a.click();URL.revokeObjectURL(a.href);
+};
+const importFile=document.getElementById("importFile");
+document.getElementById("importBtn").onclick=()=>importFile.click();
+importFile.onchange=()=>{
+  const f=importFile.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const s=JSON.parse(r.result);
+      if(!s.checked)throw 0;
+      state=s;if(!state.days)state.days=[];if(!state.open)state.open={};
+      save();render();
+    }catch(e){alert("Invalid backup file.");}
+  };
+  r.readAsText(f);
+};
+document.getElementById("resetBtn").onclick=()=>{
+  if(confirm("Reset ALL progress? This cannot be undone."))
+  {state={checked:{},days:[],open:{}};save();render();}
+};
+
+render();
+</script>
