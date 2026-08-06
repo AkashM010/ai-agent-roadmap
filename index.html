@@ -79,8 +79,6 @@ input,button{font-family:inherit}
 
 /* ---- app grid ---- */
 .app{position:relative;z-index:1;max-width:1500px;margin:0 auto;display:grid;grid-template-columns:236px minmax(0,1fr) 300px;gap:22px;padding:18px 20px 60px}
-@media (max-width:1259px){.app{grid-template-columns:236px minmax(0,1fr)}.side-r{display:none}}
-@media (max-width:919px){.app{grid-template-columns:minmax(0,1fr);padding:0 14px 48px}.side-l{display:none}}
 
 /* ---- cards base ---- */
 .card{
@@ -385,6 +383,26 @@ input,button{font-family:inherit}
 .toast.show{opacity:1;animation:rise .22s cubic-bezier(.22,1,.36,1)}
 .confetti-box{position:fixed;inset:0;pointer-events:none;z-index:85;overflow:hidden}
 .confetti-box i{position:absolute;top:-4vh;width:8px;height:12px;border-radius:2px;animation:confetti linear forwards}
+
+@media (max-width:1259px){.app{grid-template-columns:236px minmax(0,1fr)}.side-r{display:none}}
+@media (max-width:919px){
+  .app{grid-template-columns:minmax(0,1fr);padding:0 14px 80px}
+  .side-l{
+    position:fixed;bottom:0;left:0;right:0;top:auto;
+    z-index:100;background:var(--head);
+    -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+    border-top:1px solid var(--line);
+    padding:10px 14px;gap:0;height:auto;
+  }
+  .side-l .logo-card, .side-l .moti, .side-l .profile{display:none !important}
+  .side-l .nav{
+    display:flex;flex-direction:row;gap:8px;
+    overflow-x:auto;padding:0;background:none;border:none;box-shadow:none;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .side-l .nav::-webkit-scrollbar{display:none}
+  .side-l .nav button{width:auto;flex:none;padding:8px 16px}
+}
 
 @media (prefers-reduced-motion: reduce){
   *{transition:none!important;animation:none!important}
