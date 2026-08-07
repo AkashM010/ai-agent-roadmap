@@ -1,3 +1,6 @@
+<!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI Agent Roadmap</title>
@@ -10,7 +13,7 @@
   --line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);
   --ink:#F5F7FA;--sub:#9CA3AF;--faint:#5B6472;
   --green:#00C58E;--blue:#4A8DFF;--purple:#8B5CF6;--orange:#F59E42;
-  --ok:#22C55E;--on-acc:#06241B;
+  --ok:#22C55E;--on-acc:#06241B;--danger:#FF8A8A;
   --glow-g:rgba(0,197,142,.35);--glow-b:rgba(74,141,255,.35);--glow-p:rgba(139,92,246,.35);--glow-o:rgba(245,158,66,.35);
   --shadow:0 4px 14px rgba(0,0,0,.25),0 14px 44px rgba(0,0,0,.35);
   --head:rgba(13,17,23,.82);
@@ -20,7 +23,7 @@
   --line:rgba(15,23,42,.09);--line2:rgba(15,23,42,.16);
   --ink:#101623;--sub:#5B6472;--faint:#9AA3B2;
   --green:#00A377;--blue:#2F6FE4;--purple:#7443E6;--orange:#E08A2E;
-  --ok:#189F53;--on-acc:#FFFFFF;
+  --ok:#189F53;--on-acc:#FFFFFF;--danger:#C2334B;
   --glow-g:rgba(0,163,119,.22);--glow-b:rgba(47,111,228,.22);--glow-p:rgba(116,67,230,.22);--glow-o:rgba(224,138,46,.22);
   --shadow:0 4px 14px rgba(20,30,55,.08),0 14px 44px rgba(20,30,55,.12);
   --head:rgba(244,246,250,.85);
@@ -58,6 +61,9 @@ input,button{font-family:inherit}
 @keyframes drift{0%{transform:translateY(0)}100%{transform:translateY(-110vh)}}
 @keyframes confetti{0%{transform:translateY(-10vh) rotate(0)}100%{transform:translateY(110vh) rotate(720deg)}}
 @keyframes arrowNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+/* CSS, not SVG <animate>, so prefers-reduced-motion can switch it off */
+@keyframes antenna{0%,100%{opacity:1}50%{opacity:.4}}
+.antenna{animation:antenna 2s ease-in-out infinite}
 
 /* particles */
 .particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
@@ -92,10 +98,11 @@ input,button{font-family:inherit}
 .side-l{display:flex;flex-direction:column;gap:16px;position:sticky;top:18px;height:fit-content}
 .logo-card{padding:22px 18px;text-align:center}
 .logo-card .bot{width:84px;margin:0 auto;animation:floaty 5s ease-in-out infinite}
-.logo-card h2{margin:10px 0 0;font-size:17px;font-weight:800;letter-spacing:-.01em}
+.logo-card .brandname{margin:10px 0 0;font-size:17px;font-weight:800;letter-spacing:-.01em}
 .nav{padding:10px}
 .nav button{
-  display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;
+  display:flex;align-items:center;gap:12px;width:100%;background:none;
+  border:1px solid transparent; /* matches .on so the list doesn't shift on select */
   color:var(--sub);font-size:14px;font-weight:600;padding:11px 12px;border-radius:12px;cursor:pointer;
   transition:background .15s,color .15s;text-align:left;
 }
@@ -144,6 +151,8 @@ input,button{font-family:inherit}
 .statline .g{color:var(--green)}
 .statline .o{color:var(--orange)}
 .statline .div{width:1px;height:11px;background:var(--line2)}
+/* the chip's own divider is not a flex item of .statline, so it needs its own context */
+#streakChip{display:inline-flex;align-items:center;gap:10px}
 .ringwrap{flex:none;text-align:center}
 .ring{width:86px;height:86px;position:relative}
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
@@ -175,7 +184,7 @@ input,button{font-family:inherit}
   border-radius:999px;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;
   letter-spacing:.1em;text-transform:uppercase;padding:8px 15px;cursor:pointer;transition:all .18s;
 }
-.seg button:hover{color:var(--ink);border-color:var(--line2)}
+.seg button:hover{color:var(--ink)}
 .seg button.on{
   background:var(--green);border-color:var(--green);color:var(--on-acc);
   box-shadow:0 0 16px var(--glow-g);
@@ -189,17 +198,21 @@ input,button{font-family:inherit}
 }
 .jump button:hover{color:var(--ink);border-color:var(--blue)}
 .jump button.started{color:var(--blue);border-color:var(--blue)}
-.jump button.done-ph{background:rgba(34,197,94,.12);border-color:var(--ok);color:var(--ok)}
+.jump button.done-ph{background:color-mix(in srgb,var(--ok) 12%,transparent);border-color:var(--ok);color:var(--ok)}
 
 /* ---- hero next-up ---- */
 .hero{
   position:relative;margin:10px 0 26px;border-radius:20px;overflow:visible;cursor:pointer;
   border:1px solid var(--line2);
   background:
-    linear-gradient(120deg,rgba(0,197,142,.28) 0%,rgba(74,141,255,.22) 34%,rgba(139,92,246,.26) 62%,rgba(245,158,66,.30) 100%),
+    linear-gradient(120deg,
+      color-mix(in srgb,var(--green) 28%,transparent) 0%,
+      color-mix(in srgb,var(--blue) 22%,transparent) 34%,
+      color-mix(in srgb,var(--purple) 26%,transparent) 62%,
+      color-mix(in srgb,var(--orange) 30%,transparent) 100%),
     var(--card-solid);
   box-shadow:0 0 44px var(--glow-p),var(--shadow);
-  padding:24px 120px 24px 24px;
+  padding:24px 148px 24px 24px; /* clears the .cta, whose left edge sits 140px from the right */
   transition:transform .25s,box-shadow .25s;
 }
 .hero:hover{transform:translateY(-2px);box-shadow:0 0 60px var(--glow-p),var(--shadow)}
@@ -208,7 +221,7 @@ input,button{font-family:inherit}
   text-transform:uppercase;color:var(--ink);opacity:.75;font-weight:600;
 }
 .hero .nxt-item{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:6px}
-@media (max-width:919px){.hero .nxt-item{font-size:20px}.hero{padding-right:104px}}
+@media (max-width:919px){.hero .nxt-item{font-size:20px}.hero{padding-right:130px}}
 .hero .nxt-phase{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--sub);margin-top:5px}
 .hero .cta{
   position:absolute;right:88px;top:50%;transform:translateY(-50%);
@@ -296,9 +309,14 @@ input,button{font-family:inherit}
   border-top:1px solid var(--line);cursor:pointer;
 }
 .box{
-  flex:none;width:21px;height:21px;border-radius:7px;
+  flex:none;width:21px;height:21px;border-radius:7px;padding:0;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   border:1.5px solid var(--line2);background:transparent;transition:all .16s;
+}
+.box:focus-visible,.ph-head:focus-visible,.itm-ai:focus-visible,.itm-link:focus-visible,
+.jump button:focus-visible,.seg button:focus-visible,.nav button:focus-visible,
+.foot button:focus-visible,.themeBtn:focus-visible,.res a:focus-visible{
+  outline:2px solid var(--green);outline-offset:2px;
 }
 .box svg{width:12px;height:12px;opacity:0;transition:opacity .14s}
 .box path{stroke:#04140A}
@@ -325,7 +343,7 @@ input,button{font-family:inherit}
   text-transform:uppercase;padding:9px 18px;cursor:pointer;transition:all .15s;
 }
 .foot button:hover{color:var(--ink);border-color:var(--green)}
-.foot button#resetBtn:hover{color:#FF8A8A;border-color:#FF8A8A}
+.foot button#resetBtn:hover{color:var(--danger);border-color:var(--danger)}
 .foot-note{text-align:center;font-size:11.5px;color:var(--faint);line-height:1.8;margin-top:14px}
 .empty{padding:40px 0;text-align:center;color:var(--sub);font-size:13px;display:none}
 
@@ -343,6 +361,7 @@ input,button{font-family:inherit}
 }
 .tip{display:flex;gap:12px;align-items:center;padding:9px 10px;border-radius:12px;transition:background .15s}
 .tip:hover{background:rgba(255,255,255,.04)}
+:root[data-theme="day"] .tip:hover{background:rgba(15,23,42,.05)}
 .tip .ic{flex:none;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line)}
 .tip .ic svg{width:16px;height:16px}
 .tip .t{font-size:13px;font-weight:700}
@@ -384,9 +403,18 @@ input,button{font-family:inherit}
 .confetti-box{position:fixed;inset:0;pointer-events:none;z-index:85;overflow:hidden}
 .confetti-box i{position:absolute;top:-4vh;width:8px;height:12px;border-radius:2px;animation:confetti linear forwards}
 
-@media (max-width:1259px){.app{grid-template-columns:236px minmax(0,1fr)}.side-r{display:none}}
+/* the right rail reflows under the content instead of being hidden — hiding it
+   left the Stats / Achievements nav buttons pointing at nothing */
+@media (max-width:1259px){
+  .app{grid-template-columns:236px minmax(0,1fr)}
+  .side-r{grid-column:1/-1;position:static;flex-direction:row;flex-wrap:wrap;align-items:flex-start}
+  .side-r>*{flex:1 1 260px}
+}
 @media (max-width:919px){
   .app{grid-template-columns:minmax(0,1fr);padding:0 14px 80px}
+  .app>main{grid-row:1}
+  .side-r{grid-row:2}
+  /* left rail becomes a fixed bottom nav bar */
   .side-l{
     position:fixed;bottom:0;left:0;right:0;top:auto;
     z-index:100;background:var(--head);
@@ -410,6 +438,8 @@ input,button{font-family:inherit}
   .item:not(.done) .box svg,.wd:not(.hit) .c svg{opacity:0}
 }
 </style>
+</head>
+<body>
 
 <div class="meterline"><i id="meter"></i></div>
 <div class="particles" id="particles"></div>
@@ -420,13 +450,13 @@ input,button{font-family:inherit}
   <aside class="side-l">
     <div class="card logo-card">
       <div class="bot" id="miniBot"></div>
-      <h2>AI Roadmap</h2>
+      <div class="brandname">AI Roadmap</div>
     </div>
     <nav class="card nav" id="nav">
       <button class="on" data-nav="top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-6 6 6 9 0s6 6 9 0"/></svg>Roadmap</button>
       <button data-nav="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Stats</button>
       <button data-nav="ach"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg>Achievements</button>
-      <button data-nav="notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11l3 3v15H5zM9 8h6M9 12h6M9 16h4"/></svg>Notes</button>
+      <button data-nav="notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11l3 3v15H5zM9 8h6M9 12h6M9 16h4"/></svg>Tips</button>
       <button data-nav="res"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2zm0 0a2 2 0 0 1 2-2h13"/></svg>Resources</button>
       <button data-nav="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.4 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.4-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>Settings</button>
     </nav>
@@ -442,16 +472,16 @@ input,button{font-family:inherit}
   </aside>
 
   <!-- MAIN -->
-  <main class="center">
+  <main>
     <div class="mhead" id="top">
       <div class="mh-row">
         <div class="mh-lead">
           <div class="eyebrow">Track · AI Agent Engineer</div>
-          <div class="h1">The Roadmap</div>
+          <h1 class="h1">AI Agent Roadmap</h1>
           <div class="statline">
-            <span><b class="g" id="doneN2">0</b> done</span><span class="div"></span>
+            <span><b class="g" id="doneN">0</b> done</span><span class="div"></span>
             <span><b id="leftN">0</b> left</span>
-            <span id="streakChip" style="display:none"><span class="div"></span> <span class="o" id="streak"></span></span>
+            <span id="streakChip" style="display:none"><span class="div"></span><span class="o" id="streak"></span></span>
           </div>
         </div>
         <div class="ringwrap">
@@ -474,7 +504,7 @@ input,button{font-family:inherit}
       <div class="srow">
         <div class="searchbox">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="search" placeholder="Search topics…" autocomplete="off">
+          <input type="search" id="search" placeholder="Search topics…" aria-label="Search topics" autocomplete="off">
         </div>
         <div class="seg">
           <button class="on" data-f="all">All</button>
@@ -545,7 +575,7 @@ const PHASES=[
    ["Prompt Engineering Guide (covers all LLM basics)","https://www.promptingguide.ai/","GUIDE"],
    ["OpenAI Tokenizer — see tokens live","https://platform.openai.com/tokenizer","TOOL"]
   ],
-  items:["AI Basics","Machine Learning vs Deep Learning vs Generative AI","What is an LLM?","How LLMs are trained (high level)","Inference vs Training",["Tokens","https://platform.openai.com/tokenizer"],"Tokenization","Context Window",["Embeddings","https://platform.openai.com/docs/guides/embeddings"],["Vector Databases (basic)","https://www.pinecone.io/learn/vector-database/"],"Temperature","Top-P","Frequency Penalty","Presence Penalty","System Prompt","User Prompt","Assistant Messages","Conversation History","Structured Outputs","JSON Responses",["Function Calling","https://platform.openai.com/docs/guides/function-calling"],"Tool Calling","Memory","Context Engineering","Hallucinations","Knowledge Cutoff",["RAG (High Level)","https://www.pinecone.io/learn/retrieval-augmented-generation/"],"Reasoning Models","AI Agent Basics"]},
+  items:["AI Basics","Machine Learning vs Deep Learning vs Generative AI","What is an LLM?","How LLMs are trained (high level)","Inference vs Training",["Tokens","https://platform.openai.com/tokenizer"],["Tokenization","https://platform.openai.com/tokenizer"],"Context Window",["Embeddings","https://platform.openai.com/docs/guides/embeddings"],["Vector Databases (basic)","https://www.pinecone.io/learn/vector-database/"],"Temperature","Top-P","Frequency Penalty","Presence Penalty","System Prompt","User Prompt","Assistant Messages","Conversation History","Structured Outputs","JSON Responses",["Function Calling","https://platform.openai.com/docs/guides/function-calling"],"Tool Calling","Memory","Context Engineering","Hallucinations","Knowledge Cutoff",["RAG (High Level)","https://www.pinecone.io/learn/retrieval-augmented-generation/"],"Reasoning Models","AI Agent Basics"]},
  {n:"02",t:"Python for AI",
   res:[
    ["Official Python Tutorial","https://docs.python.org/3/tutorial/","DOCS",1],
@@ -614,7 +644,7 @@ const PHASES=[
    ["Pinecone — chunking strategies","https://www.pinecone.io/learn/chunking-strategies/","GUIDE"],
    ["DeepLearning.AI free short courses (RAG ones)","https://learn.deeplearning.ai/courses","COURSE"]
   ],
-  items:[["What is RAG?","https://www.pinecone.io/learn/retrieval-augmented-generation/"],"Embeddings",["Chunking","https://www.pinecone.io/learn/chunking-strategies/"],"Retrieval","Similarity Search","Vector Databases",["Build First RAG App","https://python.langchain.com/docs/tutorials/rag/"]]},
+  items:[["What is RAG?","https://www.pinecone.io/learn/retrieval-augmented-generation/"],["Embeddings","https://platform.openai.com/docs/guides/embeddings"],["Chunking","https://www.pinecone.io/learn/chunking-strategies/"],"Retrieval","Similarity Search","Vector Databases",["Build First RAG App","https://python.langchain.com/docs/tutorials/rag/"]]},
  {n:"10",t:"Projects",
   res:[
    ["OpenAI Cookbook — copy working patterns","https://cookbook.openai.com/","CODE",1],
@@ -682,7 +712,7 @@ function robotSVG(id){
   '<ellipse cx="60" cy="112" rx="30" ry="6" fill="#000" opacity=".25"/>'+
   '<circle cx="60" cy="56" r="52" fill="url(#gl'+id+')"/>'+
   '<line x1="60" y1="10" x2="60" y2="22" stroke="#8FA2BC" stroke-width="3" stroke-linecap="round"/>'+
-  '<circle cx="60" cy="8" r="4" fill="#00C58E"><animate attributeName="opacity" values="1;.4;1" dur="2s" repeatCount="indefinite"/></circle>'+
+  '<circle class="antenna" cx="60" cy="8" r="4" fill="#00C58E"/>'+
   '<rect x="26" y="22" width="68" height="52" rx="24" fill="url(#bm'+id+')"/>'+
   '<rect x="34" y="32" width="52" height="32" rx="14" fill="#0E1524"/>'+
   '<g class="eyes" id="eyes'+id+'"><g style="animation:blink 4.6s infinite;transform-origin:60px 47px">'+
@@ -744,7 +774,7 @@ PHASES.forEach((p,pi)=>{
    '</div>':"";
   const itemsHtml=flat.filter(f=>f.pi===pi).map(f=>
     '<div class="item" data-id="'+f.id+'">'+
-      '<span class="box">'+CHECK+'</span>'+
+      '<button type="button" class="box" role="checkbox" aria-checked="false" aria-label="'+esc(f.txt)+'">'+CHECK+'</button>'+
       '<span class="txt">'+esc(f.txt)+'</span>'+
       '<button class="itm-ai" data-ai="'+f.id+'" aria-label="Copy tutor prompt">AI</button>'+
       (f.url?'<a class="itm-link" href="'+esc(f.url)+'" target="_blank" rel="noopener" aria-label="Open resource">↗</a>':'')+
@@ -752,7 +782,7 @@ PHASES.forEach((p,pi)=>{
   sec.innerHTML=
    '<div class="spine"><div class="node">'+p.n+'</div><div class="connector"></div></div>'+
    '<div class="ph-card-wrap"><div class="ph-card card">'+
-     '<div class="ph-head">'+
+     '<div class="ph-head" role="button" tabindex="0" aria-expanded="false" aria-label="'+esc(p.t)+'">'+
        '<div class="picon" style="color:var('+ACCENT_VAR[acc]+');background:color-mix(in srgb, var('+ACCENT_VAR[acc]+') 12%, transparent)">'+
          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+PICONS[pi]+'</svg>'+
        '</div>'+
@@ -764,10 +794,18 @@ PHASES.forEach((p,pi)=>{
      '<div class="ph-body">'+resHtml+'<div class="items">'+itemsHtml+'</div></div>'+
    '</div></div>';
   phasesEl.appendChild(sec);
-  sec.querySelector(".ph-head").onclick=()=>{
-    sec.classList.toggle("open");
-    state.open[pi]=sec.classList.contains("open");save();
+  // one toggle path for pointer + keyboard; render() re-applies the class (see openOverride)
+  const head=sec.querySelector(".ph-head");
+  const togglePhase=()=>{
+    const willOpen=!sec.classList.contains("open");
+    if(openOverride)openOverride[pi]=willOpen;
+    else{state.open[pi]=willOpen;save();}
+    render();
   };
+  head.onclick=togglePhase;
+  head.addEventListener("keydown",e=>{
+    if(e.key==="Enter"||e.key===" "){e.preventDefault();togglePhase();}
+  });
 });
 
 // ---- AI tutor prompts: generated per topic + phase type ----
@@ -777,12 +815,17 @@ function buildPrompt(f){
   if(pi===9)return 'You are my senior AI engineering mentor. I want to build this portfolio project: "'+topic+'". I am learning to become an AI Agent Engineer and I work in Python.\n\nMentor me interactively, one step at a time — never dump the full solution:\n1. Ask me the scoping questions you need (features, which LLM/API keys I have, my current skill level) — as many as you judge necessary.\n2. Help me define a minimal MVP I can finish in a few days, and share the build plan as a short phase list so I know what\'s coming and can pause/resume.\n3. Guide me phase by phase: design → environment setup → core build → testing → polish. One phase at a time; WAIT for me to finish and report back before continuing.\n4. When I paste code or errors, review and debug with explanations, not just corrected code.\n5. If we drift from the plan, keep helping, but end each reply asking whether I want to return to the plan or keep exploring — until we are back on it.\n6. Push me to add a few tests and a README.\n7. If I say "pause", write me a complete ready-to-paste RESUME PROMPT inside a code block — restating your mentor role and these rules, the project, the MVP scope, the phase plan with finished phases marked done, and the exact next step — so I can paste it into a brand-new chat (or continue here) and pick up exactly where we stopped.\n8. At the end, help me deploy it free, draft a short LinkedIn post about it, and list 3 interview talking points from this project.\n\nStart with step 1 now.';
   if(pi===10)return 'You are my career coach for becoming an AI Agent Engineer. My current goal: "'+topic+'".\n\nWork with me interactively:\n1. Ask me the questions you need about my current progress and blockers on this goal.\n2. Build a concrete step-by-step plan with realistic deadlines and show it to me briefly.\n3. Give me ONE small action I can complete today.\n4. Each time I return and report progress, review it honestly and give the next single action.\n\nKeep every reply short and actionable. Start with step 1 now.';
   if(pi===11)return 'You are a strict but fair technical interviewer. Assess whether I have truly reached this milestone of my AI Agent Engineer roadmap: "'+topic+'".\n\nRun an interactive assessment: ask me questions ONE AT A TIME — as many as you need to judge properly — mixing conceptual, practical, and scenario-based. Tell me upfront roughly how many to expect. WAIT for each answer before the next question. Do not reveal answers during the assessment.\n\nAfter the last question: score me out of 10, list my weak areas bluntly, and give a focused 1-week revision plan targeting the gaps. Begin with question 1 now.';
+  // a bare status code doesn't warrant the full lesson-plan-and-quiz template
+  if(/^\d{3}$/.test(topic))return 'You are an expert API tutor. I am learning to become an AI Agent Engineer and I work in Python. Explain the HTTP status code "'+topic+'" to me.\n\nKeep it short and practical:\n1. What it means in one plain sentence, and what the server is telling me.\n2. Two realistic situations where I would see it — at least one from calling an LLM or agent API.\n3. How I should handle it in Python with requests: show a short snippet (retry, raise, or fix the request — whichever is right for this code).\n4. The one or two codes it is most often confused with, and how to tell them apart.\n5. One quick question to check I understood, then WAIT for my answer and tell me if I got it right.\n\nNo lesson plan and no long lecture — this is a single small concept.';
   const code=CODE_PHASES.includes(pi);
   return 'You are an expert personal tutor. I am learning to become an AI Agent Engineer. Today\'s topic: "'+topic+'" — from my roadmap phase "'+phase+'".\n\nTeach me interactively — never lecture-dump:\n1. Start by asking me questions to gauge what I already know about this topic — you decide how many and what to ask.\n2. Based on my answers, show me a brief lesson plan first: the chunks you intend to teach, one line each, sized honestly to the topic — a small topic deserves a short lesson, a big one more chunks. This way I know what is coming and can pause and resume without surprises.\n3. Then teach one chunk at a time — as detailed as the concept needs — each with a simple analogy and one concrete example from real AI-agent building.\n4. After every chunk, ask me exactly ONE check question or micro-exercise. WAIT for my reply before continuing.\n5. If my answer is wrong, give a hint first — reveal the answer only if I miss twice.\n'+(code?'6. Include small hands-on Python exercises I can run locally; when I paste my code, review it and fix mistakes with explanations.\n':'6. Keep it practical — always tie the concept back to how it is used when building real AI agents.\n')+'7. If our discussion drifts away from the planned chunks, keep helping — but end every reply with a quick choice: return to the lesson plan, or keep exploring. Ask this each time until we are back on the plan.\n8. Adapt to me: if I say "faster" compress, if I say "deeper" go deeper. If I say "pause", write me a complete ready-to-paste RESUME PROMPT inside a code block — it must restate your tutor role and all of these teaching rules, the topic, the full lesson plan with covered chunks marked done, the current chunk, and what comes next — so I can paste it into a brand-new chat (or continue in this one) and pick up exactly where we stopped.\n9. When I say "wrap up", finish with: (a) a 5-question quiz, (b) short summary notes I can save, (c) 3 interview questions on this topic with strong answers.\n\nBegin with step 1 now.';
 }
 
 const toastEl=document.createElement("div");
-toastEl.className="toast";document.body.appendChild(toastEl);
+toastEl.className="toast";
+toastEl.setAttribute("role","status");
+toastEl.setAttribute("aria-live","polite");
+document.body.appendChild(toastEl);
 let toastT;
 function toast(msg){
   toastEl.textContent=msg;
@@ -790,17 +833,27 @@ function toast(msg){
   toastEl.classList.add("show");
   clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove("show"),2300);
 }
-function copyText(t){
-  if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t).catch(()=>{});
+// resolves true only if the text actually reached the clipboard
+function legacyCopy(t){
   const ta=document.createElement("textarea");ta.value=t;
   ta.style.cssText="position:fixed;opacity:0";document.body.appendChild(ta);
-  ta.select();try{document.execCommand("copy");}catch(e){}ta.remove();return Promise.resolve();
+  ta.select();
+  let ok=false;try{ok=document.execCommand("copy");}catch(e){}
+  ta.remove();return ok;
+}
+function copyText(t){
+  if(navigator.clipboard&&window.isSecureContext)
+    return navigator.clipboard.writeText(t).then(()=>true,()=>legacyCopy(t));
+  return Promise.resolve(legacyCopy(t));
 }
 function buzz(p){try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}}
 function confetti(){
   if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
   const box=document.createElement("div");box.className="confetti-box";
-  const colors=["#00C58E","#4A8DFF","#8B5CF6","#F59E42","#22C55E"];
+  // read from the theme so Day mode doesn't rain Night-palette confetti
+  const cs=getComputedStyle(document.documentElement);
+  const colors=["--green","--blue","--purple","--orange","--ok"]
+    .map(v=>cs.getPropertyValue(v).trim()||"#4A8DFF");
   for(let i=0;i<28;i++){
     const c=document.createElement("i");
     c.style.left=(Math.random()*100)+"vw";
@@ -818,8 +871,9 @@ phasesEl.addEventListener("click",e=>{
   if(ai){
     e.stopPropagation();
     const f=flat.find(x=>x.id===ai.dataset.ai);
-    copyText(buildPrompt(f)).then(()=>{
-      toast("Tutor prompt copied — paste into any AI chat");buzz(15);
+    copyText(buildPrompt(f)).then(ok=>{
+      if(ok){toast("Tutor prompt copied — paste into any AI chat");buzz(15);}
+      else toast("Couldn't copy — check your browser's clipboard permission");
     });
     return;
   }
@@ -845,14 +899,35 @@ phasesEl.addEventListener("click",e=>{
   }
 });
 
+// view state — declared before openAndScroll because it resets both
+let filter="all";
+const searchEl=document.getElementById("search");
+// while a search/filter is active, matching phases are force-opened without touching
+// state.open; manual toggles land here instead and are discarded when filtering ends
+let openOverride=null;
+
+function setFilter(f){
+  filter=f;
+  document.querySelectorAll(".seg button").forEach(x=>{
+    const on=x.dataset.f===f;
+    x.classList.toggle("on",on);
+    x.setAttribute("aria-pressed",on?"true":"false");
+  });
+}
+
 function openAndScroll(pi,id){
   const sec=document.getElementById("phase-"+pi);
-  sec.classList.add("open");
+  // a search or filter may be hiding this phase — clear the view first, or the
+  // scroll target has no box and we'd jump to the wrong place
+  searchEl.value="";
+  setFilter("all");
   state.open[pi]=true;save();
+  render();
   setTimeout(()=>{
     const el=(id&&sec.querySelector('.item[data-id="'+id+'"]'))||sec;
-    const y=el.getBoundingClientRect().top+window.scrollY-200;
-    window.scrollTo({top:y,behavior:"smooth"});
+    const r=el.getBoundingClientRect();
+    if(!r.height)return;
+    window.scrollTo({top:r.top+window.scrollY-200,behavior:"smooth"});
   },60);
 }
 
@@ -865,14 +940,12 @@ PHASES.forEach((p,pi)=>{
   jumpEl.appendChild(b);
 });
 
-let filter="all";
-const searchEl=document.getElementById("search");
 searchEl.oninput=render;
 document.querySelectorAll(".seg button").forEach(c=>c.onclick=()=>{
-  filter=c.dataset.f;
-  document.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x===c));
+  setFilter(c.dataset.f);
   render();
 });
+setFilter("all");
 
 function streakCount(){
   const set=new Set(state.days);
@@ -896,6 +969,9 @@ function animatePct(target){
 
 function render(){
   const q=searchEl.value.trim().toLowerCase();
+  const filtering=!!q||filter!=="all";
+  if(!filtering)openOverride=null;
+  else if(!openOverride)openOverride={};
   let done=0,visibleAny=false,donePhases=0,firstOpenPi=-1;
   document.querySelectorAll(".phase").forEach(sec=>{
     const pi=+sec.dataset.pi;
@@ -904,6 +980,7 @@ function render(){
       const id=row.dataset.id;
       const isDone=!!state.checked[id];
       row.classList.toggle("done",isDone);
+      row.querySelector(".box").setAttribute("aria-checked",isDone?"true":"false");
       if(isDone){pDone++;done++;}
       const txt=row.querySelector(".txt").textContent.toLowerCase();
       let show=!q||txt.includes(q);
@@ -924,7 +1001,10 @@ function render(){
     sec.classList.toggle("started",pDone>0);
     sec.style.display=pVisible?"":"none";
     if(pVisible)visibleAny=true;
-    if((q||filter!=="all")&&pVisible)sec.classList.add("open");
+    // sole owner of the open class: saved state normally, the filter overlay while filtering
+    const isOpen=filtering?(pi in openOverride?openOverride[pi]:pVisible>0):!!state.open[pi];
+    sec.classList.toggle("open",isOpen);
+    sec.querySelector(".ph-head").setAttribute("aria-expanded",isOpen?"true":"false");
     const jb=jumpEl.querySelector('button[data-pi="'+pi+'"]');
     if(jb){
       jb.classList.toggle("done-ph",full);
@@ -935,11 +1015,16 @@ function render(){
   document.querySelectorAll(".phase").forEach(sec=>{
     sec.classList.toggle("current",+sec.dataset.pi===firstOpenPi);
   });
-  document.getElementById("empty").style.display=visibleAny?"none":"block";
+  const emptyEl=document.getElementById("empty");
+  emptyEl.style.display=visibleAny?"none":"block";
+  emptyEl.textContent=q?"No topics match that search."
+    :filter==="done"?"Nothing completed yet."
+    :filter==="todo"?"Everything's done — nice work."
+    :"No topics to show.";
 
   const total=flat.length;
   const pct=Math.round(done/total*100);
-  document.getElementById("doneN2").textContent=done;
+  document.getElementById("doneN").textContent=done;
   document.getElementById("leftN").textContent=total-done;
   document.getElementById("totalN").textContent=total;
   animatePct(pct);
@@ -989,10 +1074,12 @@ function render(){
   document.getElementById("greetHi").textContent=g+", Explorer! 👋";
 })();
 
-// left nav actions
+// left nav actions — only the entries that point at a real section keep the highlight
+const NAV_SECTIONS=["top","stats","ach","set"];
 document.getElementById("nav").addEventListener("click",e=>{
   const b=e.target.closest("button");if(!b)return;
-  document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("on",x===b));
+  if(NAV_SECTIONS.includes(b.dataset.nav))
+    document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("on",x===b));
   const go=sel=>{const el=document.querySelector(sel);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});};
   switch(b.dataset.nav){
     case "top":window.scrollTo({top:0,behavior:"smooth"});break;
@@ -1010,12 +1097,15 @@ document.getElementById("nav").addEventListener("click",e=>{
 
 // theme — "night" (default) | "day"; first run follows prefers-color-scheme
 const themeBtn=document.getElementById("themeBtn");
+function saveTheme(){try{localStorage.setItem(KEY+".theme",theme);}catch(e){}}
 let theme=localStorage.getItem(KEY+".theme");
+const storedTheme=theme;
 if(theme==="dark")theme="night";
 if(theme==="light")theme="day";
 if(theme!=="night"&&theme!=="day"){
   theme=(matchMedia&&matchMedia("(prefers-color-scheme: light)").matches)?"day":"night";
 }
+if(storedTheme&&storedTheme!==theme)saveTheme(); // persist the old-name migration
 function applyTheme(){
   if(theme==="day")document.documentElement.dataset.theme="day";
   else delete document.documentElement.dataset.theme;
@@ -1023,7 +1113,7 @@ function applyTheme(){
 }
 themeBtn.onclick=()=>{
   theme=theme==="night"?"day":"night";
-  try{localStorage.setItem(KEY+".theme",theme);}catch(e){}
+  saveTheme();
   applyTheme();
 };
 applyTheme();
@@ -1031,10 +1121,13 @@ applyTheme();
 // backup
 document.getElementById("exportBtn").onclick=()=>{
   const blob=new Blob([JSON.stringify(state,null,1)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
+  a.href=url;
   a.download="roadmap-backup.json";
-  a.click();URL.revokeObjectURL(a.href);
+  a.click();
+  // revoking on this tick cancels the download in some browsers
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
 const importFile=document.getElementById("importFile");
 document.getElementById("importBtn").onclick=()=>importFile.click();
@@ -1044,8 +1137,14 @@ importFile.onchange=e=>{
   r.onload=()=>{
     try{
       const s=JSON.parse(r.result);
-      if(!s.checked)throw 0;
-      state={checked:s.checked,days:s.days||[],open:s.open||{}};
+      // validate before assigning — a bad shape used to save, then throw mid-render
+      const isObj=v=>!!v&&typeof v==="object"&&!Array.isArray(v);
+      if(!isObj(s)||!isObj(s.checked))throw 0;
+      state={
+        checked:s.checked,
+        days:Array.isArray(s.days)?s.days.filter(d=>typeof d==="string"):[],
+        open:isObj(s.open)?s.open:{}
+      };
       save();render();toast("Progress imported");
     }catch(err){toast("That file isn't a valid backup");}
   };
@@ -1059,3 +1158,5 @@ document.getElementById("resetBtn").onclick=()=>{
 
 render();
 </script>
+</body>
+</html>
